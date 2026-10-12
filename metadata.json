@@ -1,0 +1,10 @@
+{
+  "name": "Remix Remix Remix Remix Remix Remix Remix 北歐 15 天奢華聖誕跨年之旅",
+  "description": "15天穿越丹麥、瑞典、芬蘭、挪威、冰島的五國聖誕跨年奢華探險。包含互動地圖、每日行程、自訂景點與路線導航。",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

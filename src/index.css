@@ -1,0 +1,469 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #030712;
+    color: #f3f4f6;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: 'Noto Serif TC', 'Cinzel', serif;
+  }
+
+  /* Sleek modern dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(3, 7, 18, 0.8);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(51, 65, 85, 0.6);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(16, 185, 129, 0.6);
+  }
+}
+
+/* Aurora & Festive Animations */
+@keyframes auroraGlow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.08) translateY(-10px);
+  }
+}
+
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes festivePulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.45);
+  }
+}
+
+.aurora-ambient-glow {
+  animation: auroraGlow 8s ease-in-out infinite;
+}
+
+.gentle-float {
+  animation: gentleFloat 4s ease-in-out infinite;
+}
+
+.festive-glow {
+  animation: festivePulse 3s ease-in-out infinite;
+}
+
+/* NPC Dialogue & Speech Animations */
+@keyframes npcTalkBounce {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  35% {
+    transform: scale(1.08, 0.95) translateY(-3px);
+  }
+  70% {
+    transform: scale(0.96, 1.05) translateY(-1px);
+  }
+}
+
+@keyframes dialogCaretBlink {
+  0%, 100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.15;
+    transform: translateY(3px);
+  }
+}
+
+@keyframes choiceSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes runeHaloPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3), inset 0 0 10px rgba(245, 158, 11, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), inset 0 0 18px rgba(245, 158, 11, 0.35);
+  }
+}
+
+@keyframes dialogBubblePop {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.npc-talking-active {
+  animation: npcTalkBounce 0.3s ease-in-out infinite;
+}
+
+.dialog-caret-blink {
+  animation: dialogCaretBlink 0.85s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.choice-slide-in {
+  animation: choiceSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.rune-halo-active {
+  animation: runeHaloPulse 2.2s ease-in-out infinite;
+}
+
+.dialog-bubble-pop {
+  animation: dialogBubblePop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Transnational Dynamic Glowing Route & Waypoint Radar */
+@keyframes flowLightDash {
+  0% {
+    stroke-dashoffset: 48;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes waypointRadarPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(2.4);
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+@keyframes turnpointBadgeShimmer {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.5), 0 0 24px rgba(6, 182, 212, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(52, 211, 153, 0.9), 0 0 40px rgba(14, 165, 233, 0.6);
+  }
+}
+
+.anim-route-glow-path {
+  stroke-dasharray: 8, 10;
+  animation: flowLightDash 1.6s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.8)) drop-shadow(0 0 16px rgba(6, 182, 212, 0.5));
+}
+
+@keyframes dayRouteDash {
+  0% {
+    stroke-dashoffset: 48;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.anim-day-route-flow {
+  stroke-dasharray: 8, 8;
+  animation: dayRouteDash 1.2s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.9)) drop-shadow(0 0 14px rgba(14, 165, 233, 0.7));
+}
+
+.anim-day-route-halo {
+  filter: blur(3px) drop-shadow(0 0 10px rgba(56, 189, 248, 0.6));
+}
+
+.anim-transit-vehicle-pulse {
+  animation: gentleFloat 2.4s ease-in-out infinite;
+}
+
+.anim-route-halo-underlay {
+  filter: blur(4px) drop-shadow(0 0 12px rgba(52, 211, 153, 0.7));
+}
+
+.waypoint-radar-ring {
+  animation: waypointRadarPulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.turnpoint-badge-glow {
+  animation: turnpointBadgeShimmer 2.5s ease-in-out infinite;
+}
+
+/* Glassmorphism Classes */
+.nordic-glass {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(51, 65, 85, 0.45);
+}
+
+.nordic-glass-card {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nordic-glass-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(16, 185, 129, 0.15);
+}
+
+/* Custom Leaflet Pin Styling */
+.nordic-pin {
+  background: transparent;
+  border: none;
+}
+
+.custom-map-pin {
+  background: transparent;
+  border: none;
+}
+
+.user-location-pin {
+  background: transparent;
+  border: none;
+}
+
+/* Animated Transit & Route Lines */
+@keyframes routeFlow {
+  from {
+    stroke-dashoffset: 48;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.anim-day-route-flow {
+  stroke-dasharray: 8, 12;
+  animation: routeFlow 1.2s linear infinite;
+}
+
+.anim-route-glow-path {
+  stroke-dasharray: 10, 14;
+  animation: routeFlow 1.8s linear infinite;
+}
+
+.anim-day-route-halo {
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.7));
+}
+
+@keyframes radarWave {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.waypoint-radar-ring {
+  animation: radarWave 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+/* Leaflet Popup Styling */
+.leaflet-popup-content-wrapper {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5) !important;
+  padding: 4px !important;
+}
+
+.leaflet-popup-content {
+  margin: 8px 10px !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-tip {
+  background: #0f172a !important;
+}
+
+/* Print Friendly Styles */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  header, nav, .print\:hidden, .leaflet-control-container, button {
+    display: none !important;
+  }
+
+  .border-slate-800, .border-slate-700 {
+    border-color: #cbd5e1 !important;
+  }
+
+  .bg-slate-900, .bg-slate-950 {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  .text-white, .text-slate-200, .text-slate-300 {
+    color: #0f172a !important;
+  }
+
+  .text-slate-400, .text-slate-500 {
+    color: #475569 !important;
+  }
+}
+
+/* ============================================================================
+   BOSS BATTLE: CHAOS SABER & NORDIC LEGENDARY WEAPONS FLY-IN CSS KEYFRAMES
+   (從戰鬥畫面兩側框外飛入的 CSS 關鍵影格動畫、運動模糊效果與入框位移軌跡)
+   ============================================================================ */
+@keyframes chaosSaberFlyInLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(-190px, -48px, 0) rotate(-68deg) scale(0.75);
+    filter: blur(8px) drop-shadow(0 0 18px currentColor);
+  }
+  22% {
+    opacity: 1;
+    transform: translate3d(-45px, -18px, 0) rotate(-42deg) scale(1.02);
+    filter: blur(3.5px) drop-shadow(0 0 26px currentColor);
+  }
+  48% {
+    opacity: 1;
+    transform: translate3d(58px, 8px, 0) rotate(28deg) scale(1.16);
+    filter: blur(0.6px) drop-shadow(0 0 34px currentColor) drop-shadow(0 0 12px #ffffff);
+  }
+  74% {
+    opacity: 0.95;
+    transform: translate3d(76px, 26px, 0) rotate(56deg) scale(1.08);
+    filter: blur(2.5px) drop-shadow(0 0 24px currentColor);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-90px, 44px, 0) rotate(78deg) scale(0.82);
+    filter: blur(7px) drop-shadow(0 0 12px currentColor);
+  }
+}
+
+@keyframes chaosSaberFlyInRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(190px, -48px, 0) scaleX(-1) rotate(-68deg) scale(0.75);
+    filter: blur(8px) drop-shadow(0 0 18px currentColor);
+  }
+  22% {
+    opacity: 1;
+    transform: translate3d(45px, -18px, 0) scaleX(-1) rotate(-42deg) scale(1.02);
+    filter: blur(3.5px) drop-shadow(0 0 26px currentColor);
+  }
+  48% {
+    opacity: 1;
+    transform: translate3d(-58px, 8px, 0) scaleX(-1) rotate(28deg) scale(1.16);
+    filter: blur(0.6px) drop-shadow(0 0 34px currentColor) drop-shadow(0 0 12px #ffffff);
+  }
+  74% {
+    opacity: 0.95;
+    transform: translate3d(-76px, 26px, 0) scaleX(-1) rotate(56deg) scale(1.08);
+    filter: blur(2.5px) drop-shadow(0 0 24px currentColor);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(90px, 44px, 0) scaleX(-1) rotate(78deg) scale(0.82);
+    filter: blur(7px) drop-shadow(0 0 12px currentColor);
+  }
+}
+
+@keyframes saberTrajectoryDash {
+  0% {
+    stroke-dashoffset: 320;
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.95;
+  }
+  65% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -160;
+    opacity: 0;
+  }
+}
+
+.chaos-saber-fly-left {
+  animation: chaosSaberFlyInLeft 1.15s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  will-change: transform, filter, opacity;
+}
+
+.chaos-saber-fly-left-ghost-1 {
+  animation: chaosSaberFlyInLeft 1.15s cubic-bezier(0.16, 1, 0.3, 1) -0.055s infinite;
+  opacity: 0.48;
+  filter: blur(4px) brightness(1.3);
+}
+
+.chaos-saber-fly-left-ghost-2 {
+  animation: chaosSaberFlyInLeft 1.15s cubic-bezier(0.16, 1, 0.3, 1) -0.11s infinite;
+  opacity: 0.24;
+  filter: blur(8px) brightness(1.5);
+}
+
+.chaos-saber-fly-right {
+  animation: chaosSaberFlyInRight 1.15s cubic-bezier(0.16, 1, 0.3, 1) 0.14s infinite;
+  will-change: transform, filter, opacity;
+}
+
+.chaos-saber-fly-right-ghost-1 {
+  animation: chaosSaberFlyInRight 1.15s cubic-bezier(0.16, 1, 0.3, 1) 0.085s infinite;
+  opacity: 0.48;
+  filter: blur(4px) brightness(1.3);
+}
+
+.chaos-saber-fly-right-ghost-2 {
+  animation: chaosSaberFlyInRight 1.15s cubic-bezier(0.16, 1, 0.3, 1) 0.03s infinite;
+  opacity: 0.24;
+  filter: blur(8px) brightness(1.5);
+}
+
+.chaos-saber-trajectory-line {
+  stroke-dasharray: 320;
+  animation: saberTrajectoryDash 1.15s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+

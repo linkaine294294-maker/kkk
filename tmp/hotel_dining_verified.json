@@ -1,0 +1,126 @@
+{
+  "hotelPhotos": {
+    "h-dangleterre": [
+      "https://upload.wikimedia.org/wikipedia/commons/2/29/Hotel-d-angleterre-2004.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Hotel_dAngleterre_-_the_grand_olde_lady_of_Copenhagen_hotels_%282511026670%29.jpg/1280px-Hotel_dAngleterre_-_the_grand_olde_lady_of_Copenhagen_hotels_%282511026670%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Kopenhagen_Hotel_%27D%27Angleterre_Mai_2009_PD_063.jpg/1280px-Kopenhagen_Hotel_%27D%27Angleterre_Mai_2009_PD_063.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/4/48/Franz_Sediv%C3%BD_-_Hotel_d-Angleterre.jpg"
+    ],
+    "h-grand-hotel": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Grand_hotel_November_2011.jpg/1280px-Grand_hotel_November_2011.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Blasieholmen_February_2013.jpg/1280px-Blasieholmen_February_2013.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Pano_Grand-Hotel_Nationalmuseum_Stockholm_DSC_0003w.jpg/1280px-Pano_Grand-Hotel_Nationalmuseum_Stockholm_DSC_0003w.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Grand_Hotel_September_2014.jpg/1280px-Grand_Hotel_September_2014.jpg"
+    ],
+    "h-kakslauttanen": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Wood_and_flowers.jpg/1280px-Wood_and_flowers.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/7/7b/Kakslauttanen_Igloo_village.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Husky_Dogs_%28301004607%29.jpg/1280px-Husky_Dogs_%28301004607%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Siberian_Tit_%28Poecile_cinctus%29_in_Sodankyl%C3%A4%2C_Finland.jpg/1280px-Siberian_Tit_%28Poecile_cinctus%29_in_Sodankyl%C3%A4%2C_Finland.jpg"
+    ],
+    "h-kamp": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/K%C3%A4mp_room.jpg/1280px-K%C3%A4mp_room.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Hotel_K%C3%A4mp_%2898943%29.jpg/1280px-Hotel_K%C3%A4mp_%2898943%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/K%C3%A4mp_Galleria_%26_Hotel_K%C3%A5mp.jpg/1280px-K%C3%A4mp_Galleria_%26_Hotel_K%C3%A5mp.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Hotel_K%C3%A4mp_%2847037%29.jpg/1280px-Hotel_K%C3%A4mp_%2847037%29.jpg"
+    ],
+    "h-the-thief": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Tjuvholmen_all%C3%A9_seen_from_Olav_Selvaags_plass.JPG/1280px-Tjuvholmen_all%C3%A9_seen_from_Olav_Selvaags_plass.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Odden_Tjuvholmen_seen_from_Holmen.JPG/1280px-Odden_Tjuvholmen_seen_from_Holmen.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Tjuvholmen_Oslo_3.jpg/1280px-Tjuvholmen_Oslo_3.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Pipervika_Aker_brygge_Tjuvholmen_Oslo_Oslofjorden_Norway_%282022.03.22%29.jpg/1280px-Pipervika_Aker_brygge_Tjuvholmen_Oslo_Oslofjorden_Norway_%282022.03.22%29.jpg"
+    ],
+    "h-the-edge": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Petter_Stordalen_2014-05-14_001.jpg/1280px-Petter_Stordalen_2014-05-14_001.jpg"
+    ],
+    "h-the-retreat": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Refleksjoner.jpg/1280px-Refleksjoner.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/17-08-04-Blaue-Lagune-RalfR-DSC_2422.jpg/1280px-17-08-04-Blaue-Lagune-RalfR-DSC_2422.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/17-08-04-Blaue-Lagune-RalfR-DSC_2442.jpg/1280px-17-08-04-Blaue-Lagune-RalfR-DSC_2442.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Blue-Lagoon-Iceland-January2012.jpg/1280px-Blue-Lagoon-Iceland-January2012.jpg"
+    ],
+    "h-the-edition": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Harpa_harpa_01.jpg/1280px-Harpa_harpa_01.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Harpa_davidis_01.JPG/1280px-Harpa_davidis_01.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/View_of_Reykjavik_with_Harpa_from_ferry_to_Vi%C3%B0ey_island_1.jpg/1280px-View_of_Reykjavik_with_Harpa_from_ferry_to_Vi%C3%B0ey_island_1.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/View_of_Reykjavik_with_Harpa_from_ferry_to_Vi%C3%B0ey_island_2.jpg/1280px-View_of_Reykjavik_with_Harpa_from_ferry_to_Vi%C3%B0ey_island_2.jpg"
+    ]
+  },
+  "diningPhotos": {
+    "d-havfruen": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Nyhavn_35-41_-_Hafen_3.jpg/1280px-Nyhavn_35-41_-_Hafen_3.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/c/c0/Nyhavn_33-39%2C_Copenhagen_1.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/d/d0/Havfruen_-_Nyhavn_39.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Nyhavn_17_Copenhagen_Denmark.jpg/1280px-Nyhavn_17_Copenhagen_Denmark.jpg"
+    ],
+    "d-taarnet": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Christiansborg_Slot_Copenhagen_2014_01.jpg/1280px-Christiansborg_Slot_Copenhagen_2014_01.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Christiansborg_Palace%2C_Copenhagen_%28by_Pudelek%29.JPG/1280px-Christiansborg_Palace%2C_Copenhagen_%28by_Pudelek%29.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Christiansborg_Slot_spire_Copenhagen_Denmark.jpg/1280px-Christiansborg_Slot_spire_Copenhagen_Denmark.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Christiansborg_Palace_2017-08-16.jpg/1280px-Christiansborg_Palace_2017-08-16.jpg"
+    ],
+    "d-nimb": [
+      "https://upload.wikimedia.org/wikipedia/commons/0/00/Nimb_Tivoli_2009.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Nimb_-_Tivoli_Gardens.jpg/1280px-Nimb_-_Tivoli_Gardens.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Copenhagen_tivoli_IMG_0187.jpg/1280px-Copenhagen_tivoli_IMG_0187.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Nimb_%28Tivoli_Gardens%29.jpg/1280px-Nimb_%28Tivoli_Gardens%29.jpg"
+    ],
+    "d-gyldene-freden": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Den_Gyllene_Freden_skylt.jpg/1280px-Den_Gyllene_Freden_skylt.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Den_Gyldene_Freden_2013a.jpg/1280px-Den_Gyldene_Freden_2013a.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Den_Gyldene_Freden_2013e.jpg/1280px-Den_Gyldene_Freden_2013e.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Den_Gyldene_Freden_2013c.jpg/1280px-Den_Gyldene_Freden_2013c.jpg"
+    ],
+    "d-fotografiska": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Fotografiska_2010a.jpg/1280px-Fotografiska_2010a.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Museum_Fotografiska%2C_Stockholm.jpg/1280px-Museum_Fotografiska%2C_Stockholm.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Fotografiska_museet_Stockholm_2016_01.jpg/1280px-Fotografiska_museet_Stockholm_2016_01.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Fotografiska_i_Stockholm_02.jpg/1280px-Fotografiska_i_Stockholm_02.jpg"
+    ],
+    "d-kakslauttanen-gala": [
+      "https://upload.wikimedia.org/wikipedia/commons/d/d6/Poronk%C3%A4ristys.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Finnbiff.JPG/1280px-Finnbiff.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/5/51/Yumyum.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Kotipizza_Poronk%C3%A4ristys.jpg/1280px-Kotipizza_Poronk%C3%A4ristys.jpg"
+    ],
+    "d-soppakeittio": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Antiguo_Mercado_de_Helsinki%2C_Finlandia%2C_2012-08-14%2C_DD_01.JPG/1280px-Antiguo_Mercado_de_Helsinki%2C_Finlandia%2C_2012-08-14%2C_DD_01.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Antiguo_Mercado_de_Helsinki%2C_Finlandia%2C_2012-08-14%2C_DD_05.JPG/1280px-Antiguo_Mercado_de_Helsinki%2C_Finlandia%2C_2012-08-14%2C_DD_05.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Suomi100_Helsinki_old_market_hall_1.jpg/1280px-Suomi100_Helsinki_old_market_hall_1.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Suomi100_Helsinki_old_market_hall_3.jpg/1280px-Suomi100_Helsinki_old_market_hall_3.jpg"
+    ],
+    "d-savoy": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Statue_Eugenio_of_Savoy_Heldenplatz_Vienna_Austria.jpg/1280px-Statue_Eugenio_of_Savoy_Heldenplatz_Vienna_Austria.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/3/3d/Savoy_RGB_69.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Restaurant_Savoy_%28Helsinki%29_-_DSC05579.JPG/1280px-Restaurant_Savoy_%28Helsinki%29_-_DSC05579.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Savoy_teatteri.jpg/1280px-Savoy_teatteri.jpg"
+    ],
+    "d-loyly-rest": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/L%C3%B6yly_Helsinki_2.jpg/1280px-L%C3%B6yly_Helsinki_2.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/L%C3%B6yly_Helsinki.jpg/1280px-L%C3%B6yly_Helsinki.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/L%C3%B6yly_-saunan_ravintola_01.jpg/1280px-L%C3%B6yly_-saunan_ravintola_01.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/L%C3%B6yly_-saunan_terassi.jpg/1280px-L%C3%B6yly_-saunan_terassi.jpg"
+    ],
+    "d-maaemo": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Opera_house_in_Bj%C3%B8rvika%2C_Oslo_under_construction_7jun2005.jpg/1280px-Opera_house_in_Bj%C3%B8rvika%2C_Oslo_under_construction_7jun2005.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/0/08/Opera_house_in_Bj%C3%B8rvika%2C_Oslo_under_construction-20070203.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Roundabout_Bispelokket_in_Bj%C3%B8rvika%2C_Oslo.JPG/1280px-Roundabout_Bispelokket_in_Bj%C3%B8rvika%2C_Oslo.JPG",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Oslo_Opera_house_%282015%29%282%29.jpg/1280px-Oslo_Opera_house_%282015%29%282%29.jpg"
+    ],
+    "d-fiskekompaniet": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Paralithodes_camtschaticus%2C_1.jpg/1280px-Paralithodes_camtschaticus%2C_1.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Ivrig_fiskehandel_%285634235889%29.jpg/1280px-Ivrig_fiskehandel_%285634235889%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/HUS%C3%98Y_Hus%C3%B8ya_%C3%98yfjorden_Senja_%28former_Lenvik%29_NORWAY_2022-05-30_Fiskev%C3%A6r_Fishing_village_on_small_island_in_fjord_by_ocean_Havn_harbour_Fiskeb%C3%A5ter_ships_boats_molo_breakwater_Br._Karlsen_seafood_company_Hus%C3%B8ysundet_Snowy_mountains.jpg/1280px-thumbnail.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/HUS%C3%98Y_Hus%C3%B8ya_%C3%98yfjorden_Senja_%28former_Lenvik%29_NORWAY_2022-05-30_Fiskev%C3%A6r_Fishing_village_on_small_island_in_fjord_by_ocean_Havn_harbour_Fiskeb%C3%A5ter_ships_boats_Br._Karlsen_seafood_company_Hus%C3%B8ysundet_Molo_breakwater_Snowy_mountains.jpg/1280px-thumbnail.jpg"
+    ],
+    "d-moss": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/The_blue_Lagoon%2C_Iceland_%285454151998%29.jpg/1280px-The_blue_Lagoon%2C_Iceland_%285454151998%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/The_blue_Lagoon%2C_Iceland_%285454149170%29.jpg/1280px-The_blue_Lagoon%2C_Iceland_%285454149170%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Blue_Lagoon_Geothermal_pool_08.jpg/1280px-Blue_Lagoon_Geothermal_pool_08.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Blue_Lagoon_Geothermal_pool_15.jpg/1280px-Blue_Lagoon_Geothermal_pool_15.jpg"
+    ],
+    "d-tides": [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Things_to_do_in_Iceland_%289280871227%29.jpg/1280px-Things_to_do_in_Iceland_%289280871227%29.jpg"
+    ]
+  }
+}

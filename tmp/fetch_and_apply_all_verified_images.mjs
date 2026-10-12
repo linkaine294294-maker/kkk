@@ -1,0 +1,455 @@
+import fs from 'fs';
+
+async function searchCommons(queries, minCount = 3) {
+  const queryList = Array.isArray(queries) ? queries : [queries];
+  const collected = [];
+
+  for (const q of queryList) {
+    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrsearch=${encodeURIComponent(
+      'filetype:bitmap ' + q
+    )}&gsrlimit=8&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1280&format=json`;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const res = await fetch(url, {
+          headers: { 'User-Agent': 'NordicExpeditionGuide/2.0 (https://example.org)' },
+        });
+        const data = await res.json();
+        const pages = Object.values(data.query?.pages || {});
+        for (const p of pages) {
+          const ii = p.imageinfo?.[0];
+          if (!ii) continue;
+          let imgUrl = (ii.thumburl || ii.url || '').split('?')[0];
+          imgUrl = imgUrl.replace('https://thumb.wikimedia.org/', 'https://upload.wikimedia.org/');
+          if (
+            imgUrl &&
+            /\.(jpg|jpeg|png|webp)$/i.test(imgUrl) &&
+            !/map|diagram|logo|coat_of_arms|flag|icon|plan|stamp|signature|locator|chart|graph/i.test(imgUrl) &&
+            !collected.some((c) => c.url === imgUrl)
+          ) {
+            collected.push({
+              url: imgUrl,
+              author: (ii.extmetadata?.Artist?.value || 'Wikimedia Commons Photographer')
+                .replace(/<[^>]+>/g, '')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .slice(0, 60),
+              license: (ii.extmetadata?.LicenseShortName?.value || 'CC BY-SA 4.0')
+                .replace(/<[^>]+>/g, '')
+                .trim(),
+            });
+          }
+        }
+        break;
+      } catch {
+        await new Promise((r) => setTimeout(r, 300));
+      }
+    }
+    if (collected.length >= minCount) break;
+  }
+  return collected;
+}
+
+const SPOTS_CONFIG = {
+  'spot-d1-1': {
+    queries: ['Copenhagen Airport terminal', 'Kastrup Airport'],
+    captions: ['哥本哈根凱斯楚普國際機場第三航廈實景', '北歐花旗松實木地板與極簡採光航廈', '哥本哈根機場抵達大廳與玻璃帷幕'],
+    story: '1925年啟用的凱斯楚普機場是全球最早的民用機場之一；1998年落成的第三航廈由丹麥建築大師 Vilhelm Lauritzen 設計，以飛鳥展翼般的流線屋頂迎接全球旅人。',
+    trivia: '機場內全面鋪設溫潤的北歐花旗松實木地板，是全世界極少數全木質地板的國際機場！',
+    mustDo: ['在第三航廈巨型玻璃帷幕與木地板長廊拍照打卡', '品嚐機場內丹麥百年烘培坊 Lagkagehuset 的肉桂捲', '搭乘全自動無人駕駛 Metro M2 線 15 分鐘直達國王新廣場'],
+  },
+  'spot-d1-2': {
+    queries: ['Nyhavn Copenhagen', 'Nyhavn canal'],
+    captions: ['哥本哈根新港彩色山牆木屋與百年古帆船實景', '新港運河畔安徒生故居與石板步道', '新港傍晚暖黃燈火倒映運河水面'],
+    story: '1670年代由克里斯蒂安五世國王下令瑞典戰俘開鑿人工運河，昔日曾是水手與酒館雲集的繁華碼頭；童話大師安徒生曾先後在18號、20號與67號居住長達近20年。',
+    trivia: '新港9號建於1681年，是整條運河上最古老且從未改建過的原始藍色山牆老屋！',
+    mustDo: ['尋找新港 20 號（安徒生寫下《打火匣》與《豌豆公主》的故居）', '手捧一杯冒著熱氣的肉桂熱紅酒 Gløgg 沿著運河漫步', '在停泊百年的雙桅木造古帆船與彩色木屋倒影前拍全景照'],
+  },
+  'spot-d2-1': {
+    queries: ['Christiansborg Palace', 'Christiansborg Slot'],
+    captions: ['克里斯蒂安堡宮花崗岩外牆與106公尺高塔實景', '城堡島運河畔的克里斯蒂安堡宮全景', '克里斯蒂安堡宮皇家接待廳與巴洛克馬廄'],
+    story: '坐落於哥本哈根發源地「城堡島（Slotsholmen）」，曾兩度毀於祝融並三度重建；今日是全世界唯一同時容納國會、最高法院與首相辦公室（三權合一）及皇家接待廳的宮殿。',
+    trivia: '宮殿地底仍完整保留著西元 1167 年阿布薩隆主教興建第一代哥本哈根城堡的古老石造遺址！',
+    mustDo: ['免費搭乘電梯登上 106 公尺高的宮殿塔樓俯瞰全城紅瓦屋頂', '參觀女王會客廳內描繪丹麥千年歷史的 17 幅巨型現代掛毯', '造訪宮殿後方的皇家馬廄一睹純白皇家馬匹與黃金馬車'],
+  },
+  'spot-d2-2': {
+    queries: ['Strøget Copenhagen', 'Amagertorv Copenhagen'],
+    captions: ['哥本哈根斯楚格（Strøget）百年行人徒步街實景', '阿瑪廣場（Amagertorv）仙鶴噴泉與皇家哥本哈根瓷器旗艦店', '冬日懸掛聖誕星燈的斯楚格購物大道'],
+    story: '全長1.1公里的斯楚格街於1962年正式改為無車行人專用區，是全世界歷史最悠久、最長的戶外徒步購物大道，串聯市政廳廣場與國王新廣場。',
+    trivia: '1962年剛提出封街禁車時曾遭到商家強烈反對，認為沒有汽車就沒有客人，結果啟用首年生意反而暴增三成，成為全球城市規劃典範！',
+    mustDo: ['造訪創建於 1616 年的文藝復興建築內的 Royal Copenhagen 皇家哥本哈根手繪瓷器總店', '在 LEGO 樂高旗艦店與巨型樂高新港模型合影並自製專屬小人偶', '到百年老店 La Glace 品嚐丹麥最古老的傳奇「運動蛋糕（Sportskage）」'],
+  },
+  'spot-d2-3': {
+    queries: ['Amalienborg Palace', 'Amalienborg Copenhagen'],
+    captions: ['阿馬林堡宮八角廣場與腓特烈五世騎馬銅像', '丹麥皇家衛隊熊皮帽哨兵交接儀式', '阿馬林堡宮洛可可式宮殿與大理石教堂圓頂'],
+    story: '原為四戶丹麥貴族於1750年代興建的洛可可宅邸，1794年克里斯蒂安堡宮遭大火焚毀後，王室緊急購入此處作為冬宮，並沿用至今成為丹麥君主正式居所。',
+    trivia: '觀察宮殿屋頂是否升起丹麥國旗「丹尼布洛（Dannebrog）」，就能立刻知道國王或王后今天是否正在宮中！',
+    mustDo: ['正午 12:00 準時觀賞頭戴黑熊皮高帽的皇家衛隊樂隊交接', '站在八角廣場中央軸線拍攝腓特烈大理石教堂壯麗圓頂', '參觀克里斯蒂安八世宮內的皇家歷史博物館書房'],
+  },
+  'spot-d2-4': {
+    queries: ['Little Mermaid Copenhagen', 'Den lille Havfrue'],
+    captions: ['長堤公園海濱的小美人魚百年青銅雕像實景', '小美人魚靜坐花崗岩石凝望厄勒海峽', '哥本哈根海濱長堤公園與小美人魚全景'],
+    story: '1913年由嘉士伯啤酒第二代傳人 Carl Jacobsen 觀賞皇家芭蕾《小美人魚》後深受感動而捐贈。雕塑家 Edvard Eriksen 以首席芭蕾舞伶 Ellen Price 的臉龐與自己妻子 Eline 的身軀塑造而成。',
+    trivia: '這座舉世聞名的雕像其實高僅 125 公分、重 175 公斤，比大多數遊客想像中更嬌小溫婉！',
+    mustDo: ['站在長堤海岸步道以厄勒海峽為背景與小美人魚同框', '順道參觀旁邊氣勢磅礡的吉菲昂噴泉（Gefion Fountain）', '沿著星形卡斯特雷特要塞（Kastellet）紅牆護城河散步'],
+  },
+  'spot-d2-5': {
+    queries: ['Tivoli Gardens Copenhagen', 'Tivoli Copenhagen'],
+    captions: ['哥本哈根蒂沃利花園璀璨夜色與童話建築', '蒂沃利花園百年歷史園區與湖畔倒影', '蒂沃利花園冬日聖誕燈海與摩天輪'],
+    story: '1843年由創辦人 Georg Carstensen 向國王進言「當人民在娛樂時便不會空想政治」而獲准興建，安徒生曾在此找尋《夜鶯》靈感，華特迪士尼更親臨考察並以此啟發創立迪士尼樂園。',
+    trivia: '園內的木造雲霄飛車 Rutschebanen 建於1914年，至今仍有一位專業煞車員坐在列車中央手動控制下坡速度！',
+    mustDo: ['體驗 1914 年骨董木造雲霄飛車與高空天女散花旋轉椅', '在蒂沃利湖畔欣賞結合北歐交響樂的水舞雷射燈光秀', '品嚐丹麥聖誕限定傳統圓球鬆餅 Æbleskiver 配覆盆子果醬'],
+  },
+  'spot-d3-1': {
+    queries: ['Gamla stan Stockholm street', 'Gamla stan alley'],
+    captions: ['斯德哥爾摩老城 Gamla Stan 中世紀鵝卵石街巷實景', '老城暖橘與金黃色歷史建築立面', '僅90公分寬的莫滕·特羅齊格窄巷（Mårten Trotzigs Gränd）'],
+    story: '建立於1252年的老城 Gamla Stan 是斯德哥爾摩的發源地，由比爾格伯爵（Birger Jarl）築城防禦波羅的海海盜，完整保留了13至17世紀北日耳曼山牆建築與蜿蜒石板巷弄。',
+    trivia: '老城內的「莫滕·特羅齊格巷（Mårten Trotzigs Gränd）」僅有 36 階石梯、最窄處只有 90 公分寬，雙手張開就能同時摸到兩側牆壁！',
+    mustDo: ['挑戰穿過僅 90 公分寬的莫滕·特羅齊格窄巷並拍照留念', '尋找藏在芬蘭教堂後院、全瑞典最小的「看月小男孩（Järnpojke）」鐵雕並摸頭許願', '觀察老城外牆上數百年歷史的「錨形鐵壁虎（Ankarslut）」，數字代表建築年份'],
+  },
+  'spot-d3-2': {
+    queries: ['Stortorget Stockholm', 'Nobel Prize Museum Stockholm'],
+    captions: ['斯德哥爾摩老城大廣場（Stortorget）紅黃歷史山牆建築與諾貝爾博物館', '大廣場古井與百年傳統聖誕市集木屋攤位', '大廣場紅樓 Schantzska huset 的92塊白色紀念石磚'],
+    story: '大廣場是斯德哥爾摩最古老的廣場；廣場旁紅樓外牆鑲嵌著92塊白色石磚，相傳紀念1520年「斯德哥爾摩慘案」中遭丹麥國王克里斯蒂安二世處決的92位瑞典貴族。',
+    trivia: '民間傳說若有人能數清紅樓上所有白石磚，其中一塊就會掉落！而在諾貝爾博物館咖啡廳，把椅子翻過來就能看到歷屆諾貝爾獎得主的親筆簽名！',
+    mustDo: ['在諾貝爾博物館 Bistro Nobel 品嚐諾貝爾晚宴同款獎章巧克力與冰淇淋', '翻開咖啡廳椅子底部尋找愛因斯坦或文學獎得主的親筆簽名', '在自 1837 年延續至今的大廣場聖誕市集喝熱紅酒 Glögg 配薑餅'],
+  },
+  'spot-d4-1': {
+    queries: ['Vasa ship Stockholm', 'Vasamuseet'],
+    captions: ['瓦薩沉船博物館 1628 年皇家戰艦全貌實景', '瓦薩號戰艦船尾精雕細琢的皇室木雕群像', '瓦薩號雙層 64 門青銅火砲甲板細節'],
+    story: '1628年8月10日，瑞典國王古斯塔夫二世下令建造的64門巨砲旗艦「瓦薩號」展開首航，卻因船身過高、壓艙石不足，出港僅1,300公尺便遇陣風翻覆沉入波羅的海，直到333年後的1961年才被打撈重見天日。',
+    trivia: '受惠於波羅的海低鹽度與缺氧冰冷海水，船木沒有被食船蛆侵蝕，整艘船高達 98% 都是 1628 年的原始部件！',
+    mustDo: ['繞行六層觀景台從船底龍骨一路仰望至高達 52 公尺的主桅杆', '細看船尾超過 700 尊象徵瑞典王權與古羅馬英雄的木雕像', '觀看博物館內的《瓦薩號首航與打撈》多語系歷史紀錄片'],
+  },
+  'spot-d4-2': {
+    queries: ['Stockholm City Hall', 'Stadshuset Stockholm'],
+    captions: ['斯德哥爾摩市政廳（Stadshuset）梅拉倫湖畔紅磚高塔', '市政廳金廳（Gyllene Salen）1800萬塊純金馬賽克壁畫', '諾貝爾獎晚宴舉辦地「藍廳（Blå hallen）」壯闊階梯'],
+    story: '由建築師 Ragnar Östberg 耗時12年、使用800萬塊紅磚興建，於1923年瑞典國慶日落成；每年12月10日諾貝爾晚宴在藍廳舉行，隨後於金廳舉辦盛大皇家舞會。',
+    trivia: '「藍廳」其實是紅磚牆！當年建築師原本打算將紅磚塗成藍色，但砌好後發現手打紅磚質感太美，決定保留原色卻沿用了「藍廳」之名！',
+    mustDo: ['站在藍廳雲石大階梯中央體驗諾貝爾獎得主緩步而下的視角', '仰望金廳北牆高達數公尺的「梅拉倫湖女王」純金馬賽克壁畫', '走到市政廳臨水拱廊拍攝騎士島教堂尖塔與梅拉倫湖全景'],
+  },
+  'spot-d4-3': {
+    queries: ['Fotografiska Stockholm', 'Stadsgården Stockholm'],
+    captions: ['斯德哥爾摩 Fotografiska 當代攝影博物館 1906 年新藝術風格紅磚建築', '從頂樓景觀餐廳遠眺斯德哥爾摩老城與皇宮水岸夜景', '南島（Södermalm）港灣第一排工業遺產與現代藝術展廳'],
+    story: '前身為建於1906年、由建築師 Ferdinand Boberg 設計的新藝術風格（Art Nouveau）皇家海關大樓，2010年改建為全球最具影響力的當代攝影藝術殿堂。',
+    trivia: '頂樓餐廳曾榮獲米其林綠星（Michelin Green Star）與「全球最佳博物館餐廳」大獎，堅持零浪費永續北歐料理哲學！',
+    mustDo: ['夜間參觀大師級當代攝影特展（營業至深夜 23:00，避開白天人潮）', '在三樓全景落地窗酒吧點一杯北歐琴酒調酒俯瞰對岸格羅納倫遊樂園燈火', '沿著南島 Fjällgatan 懸崖木棧道散步拍攝斯德哥爾摩群島明信片視角'],
+  },
+  'spot-d5-1': {
+    queries: ['Ivalo Airport', 'Inari winter Lapland'],
+    captions: ['芬蘭最北端伊瓦洛極圈機場（Ivalo Airport）白雪跑道實景', '深入北極圈 250 公里的拉普蘭原野雪林航廈', '芬蘭航空客機降落於銀白泰加針葉林雪原'],
+    story: '位於北緯68度的伊瓦洛機場是歐盟最北端的民用機場，1943年二戰期間初建，如今則是全球極光獵人進入薩利色爾卡（Saariselkä）與伊納里湖荒野的極北門戶。',
+    trivia: '機場跑道緊鄰廣袤的拉普蘭原野，冬季除雪車隊能在暴風雪中於 12 分鐘內清理完畢整條跑道，展現芬蘭世界第一的極地除雪黑科技！',
+    mustDo: ['走出機艙踏上厚實白雪跑道，與印有「IVALO ARCTIC AIRPORT」的木屋航廈合影', '在機場大廳欣賞拉普蘭極光與薩米文化攝影裝置', '搭乘專屬極地接駁車沿著霧凇雪林公路直奔薩利色爾卡玻璃屋'],
+  },
+  'spot-d5-2': {
+    queries: ['Kakslauttanen', 'Saariselkä aurora winter'],
+    captions: ['芬蘭拉普蘭極光玻璃圓頂冰屋與雪林夜色', '從防霜熱能玻璃穹頂仰望漫天綠極光', '極圈針葉林間的浪漫玻璃屋與原木小木屋聚落'],
+    story: '1973年創辦人 Jussi Eiramo 在薩利色爾卡荒野拋錨露宿時愛上這片極地，後首創採用「航太級導熱防霜玻璃」打造的圓頂玻璃屋，讓旅人不必在零下30度受凍也能躺在床上看極光。',
+    trivia: '芬蘭語將北極光稱為「Revontulet（狐狸之火）」，相傳是北極火狐在雪原奔跑時，尾巴掃起雪花摩擦夜空激起的火花！',
+    mustDo: ['開啟房內的「極光警報鈴（Aurora Alarm）」，極光出現即刻提醒', '躺在電動調整角度的溫暖大床上 360 度仰望極光女神舞動', '在度假村跨越覆蓋厚雪的木橋拍攝整排發光玻璃屋如同外星基地般的奇景'],
+  },
+  'spot-d6-1': {
+    queries: ['Reindeer sleigh Lapland', 'Reindeer Finland snow'],
+    captions: ['芬蘭拉普蘭雪原馴鹿雪橇穿越霧凇森林', '薩米族傳統木雪橇與溫馴北極馴鹿', '薩米木帳篷 Kota 營火與熱藍莓汁體驗'],
+    story: '在芬蘭拉普蘭，馴鹿的數量比當地居民還多！千百年來原住民薩米人（Sámi）隨馴鹿遷徙放牧，馴鹿雪橇是極夜雪原中最安靜、最神聖的古老交通工具。',
+    trivia: '馴鹿的眼睛會隨季節變色！夏天呈現璀璨金色，到了漫長極夜的冬天則會變成深邃藍色，以提升近千倍的夜視感光能力！',
+    mustDo: ['裹著溫暖馴鹿皮毛毯乘坐木雪橇穿越掛滿厚雪的泰加針葉林', '親手餵食馴鹿最喜愛的北極白地衣（鹿苔）並近距離合影', '圍坐在薩米傳統木帳篷 Kota 火爐旁喝熱藍莓汁聽牧鹿人唱 Joik 古調'],
+  },
+  'spot-d6-2': {
+    queries: ['Finnish sauna winter', 'Ice swimming Finland'],
+    captions: ['芬蘭拉普蘭傳統原木煙燻桑拿房（Savusauna）雪景', '蒸氣滾燙的芬蘭桑拿木屋與白樺樹枝（Vihta）', '冒著寒氣的冰封河面破冰泳池（Avanto）'],
+    story: '煙燻桑拿（Savusauna）是芬蘭最古老的桑拿形式：沒有煙囪，先用樺木燃燒數小時加熱巨石，待排盡濃煙後進入，空氣中瀰漫著獨特的木質冷燻清香。',
+    trivia: '芬蘭人相信「如果桑拿、焦油和烈酒都治不好你的病，那這病就沒救了！」冰火交替能瞬間促使腦內啡與多巴胺飆升三倍！',
+    mustDo: ['用溫水浸軟的芬蘭白樺樹枝束（Vihta）輕拍肩膀促進血液循環', '在 85°C 煙燻桑拿蒸透後，鼓起勇氣走下木梯浸泡 0°C 冰洞 5 秒鐘！', '包著浴巾在雪地露台喝一杯冰鎮芬蘭長飲（Hartwall Original Long Drink）'],
+  },
+  'spot-d6-3': {
+    queries: ['Lohikeitto', 'Poronkäristys'],
+    captions: ['拉普蘭原木餐廳營火慢烤北極鮭魚與平安夜饗宴', '熱騰騰的芬蘭傳統奶油蒔蘿鮭魚湯（Lohikeitto）', '清燉拉普蘭馴鹿肉佐馬鈴薯泥與野生越橘果醬（Poronkäristys）'],
+    story: '芬蘭人的平安夜（Jouluaatto）是一年中最神聖的夜晚，正午12點全芬蘭會聆聽圖爾庫宣讀延續自13世紀的《聖誕和平宣言》，隨後全家共享聖誕火腿、鮭魚與清燉鹿肉晚宴。',
+    trivia: '芬蘭平安夜晚宴會在米布丁裡藏一顆完整的杏仁，誰吃到那顆杏仁就代表來年將擁有整年的好運與幸福！',
+    mustDo: ['品嚐以樺木明火慢烤 2 小時、外皮酥脆多汁的北極圈釘木烤鮭魚（Loimulohi）', '品嚐拉普蘭國菜「清燉鹿肉佐越橘醬（Poronkäristys）」與北極黃金雲莓甜點', '在溫暖的松木壁爐旁與聖誕老人驚喜見面並領取平安夜紀念禮'],
+  },
+  'spot-d7-1': {
+    queries: ['Dog sledding Finland', 'Husky sled snow'],
+    captions: ['阿拉斯加與西伯利亞哈士奇雪橇犬隊奔馳拉普蘭雪原', '活力十足的極地雪橇犬與晨曦粉紅天空', '體驗一人掌舵一人乘坐的極地狗拉雪橇'],
+    story: '西伯利亞與阿拉斯加哈士奇擁有雙層禦寒毛皮與驚人耐力，能在零下 40 度極寒中每日奔跑上百公里；牠們天生熱愛奔跑，出發前總會興奮地齊聲長嚎，一旦起跑卻瞬間安靜專注。',
+    trivia: '哈士奇的腳掌肉墊具有特殊的血液逆流熱交換循環系統，即使長時間踩在冰面上也絕對不會凍傷！',
+    mustDo: ['輪流體驗站在雪橇後方「踩煞車掌舵（Musher）」與坐在前座拍照', '奔馳後走進犬舍摸摸功臣哈士奇並與藍眼幼犬溫馨互動', '在營火木屋烤芬蘭肉腸（Makkara）配薑餅補充熱量'],
+  },
+  'spot-d7-2': {
+    queries: ['Urho Kekkonen National Park', 'Aurora Borealis Finland Lapland'],
+    captions: ['烏爾霍凱科寧國家公園（Urho Kekkonen）極光覆蓋的冰封樹掛（Tykky）', '北極荒野雪山與漫天綠紫極光光幕', '穿著極地雪鞋穿越零光害的拉普蘭原始森林'],
+    story: '成立於1983年、面積廣達2,550平方公里的烏爾霍凱科寧國家公園是芬蘭第二大國家公園，以芬蘭傳奇總統命名，完整保留了冰河時期以來的極圈丘陵（Fells）與泰加林荒野。',
+    trivia: '冬季山頭的雲杉被厚重凍霧包覆，形成宛如白色奶油怪獸般的奇幻「樹掛（Tykky）」，在極光綠芒照耀下猶如魔戒奇幻世界！',
+    mustDo: ['穿上極地寬底雪鞋（Snowshoes）或搭乘雪地摩托車深入零光害高地守候極光', '在冰封的巨型白色樹掛（Tykky）森林間拍下奇幻剪影', '抬頭辨認北極星、仙后座與橫跨天頂的北極光弧線'],
+  },
+  'spot-d8-1': {
+    queries: ['Helsinki Cathedral', 'Tuomiokirkko Helsinki'],
+    captions: ['赫爾辛基大教堂（Tuomiokirkko）純白新古典主義建築與綠色圓頂', '參議院廣場亞歷山大二世銅像與大教堂高聳階梯', '雪夜裡發光的赫爾辛基白教堂全景'],
+    story: '1852年落成的赫爾辛基大教堂由德國建築師 Carl Ludvig Engel 設計，原名「聖尼古拉教堂」以紀念俄國沙皇尼古拉一世；純白廊柱與綠色銅頂在波羅的海航道上遠在數海里外即可望見。',
+    trivia: '教堂屋頂邊緣佇立著 12 尊巨大的鋅製十二使徒雕像，這是全世界規模最大的獨立鋅雕群！',
+    mustDo: ['像當地人一樣坐在大教堂前 45 級寬廣花崗岩階梯上曬冬日暖陽拍照', '走進極簡純白的八角形路德宗大廳仰望管風琴與穹頂', '逛逛教堂正前方參議院廣場的赫爾辛基聖誕市集（Tuomaan Markkinat）'],
+  },
+  'spot-d8-2': {
+    queries: ['Old Market Hall Helsinki', 'Kauppatori Helsinki'],
+    captions: ['赫爾辛基百年老農貿市場（Vanha kauppahalli）紅磚濱海建築', '市場內琳瑯滿目的煙燻鮭魚、魚子醬與北歐熟食木攤位', '港邊集市廣場（Kauppatori）與波羅的海破冰渡輪'],
+    story: '1889年開幕的赫爾辛基老農貿市場由建築師 Gustaf Nyström 設計，坐落於南港岸邊，百餘年來一直是赫爾辛基市民採買煙燻馴鹿肉、熊肉罐頭與新鮮波羅的海魚獲的美食殿堂。',
+    trivia: '市場內的 Story Café 與 Soppakeittiö 湯屋每天熬煮的奶油海鮮濃湯，曾多次被評選為全歐洲最美味的市場平民美食！',
+    mustDo: ['在 Soppakeittiö 點一碗滿滿鮭魚與鮮蝦的傳統濃湯配無限續加的烤麵包', '品嚐芬蘭傳統「卡累利阿派（Karjalanpiirakka）」塗抹蛋奶油（Munavoi）', '在港邊搭乘 15 分鐘破冰渡輪遠眺世界文化遺產芬蘭堡（Suomenlinna）'],
+  },
+  'spot-d9-1': {
+    queries: ['Temppeliaukio Church', 'Rock Church Helsinki'],
+    captions: ['赫爾辛基岩石教堂（Temppeliaukio）天然花崗岩壁與紫銅穹頂', '由 22 公里長銅條盤繞而成的飛碟狀天頂與環形天窗', '陽光穿透 180 扇天窗灑落在古老冰河岩壁上'],
+    story: '1969年由建築師兄弟 Timo 與 Tuomo Suomalainen 設計，直接將一整座天然前寒武紀花崗岩山丘從頂部炸開掏空，上方覆蓋巨型紫銅線圈圓頂，被譽為現代有機建築的巔峰。',
+    trivia: '未經修飾的粗糙花崗岩壁擁有世界頂級的天然殘響音效，連鑲嵌在岩縫中的 3001 根管風琴音管都不設琴箱！',
+    mustDo: ['抬頭細看由長達 22 公里的紫銅線圈一圈圈纏繞而成的飛碟穹頂', '尋找岩壁下方流淌的天然融雪地下水痕與冰河刮痕', '若遇上現場管風琴或大提琴演奏，務必靜坐聆聽天籟般的岩洞共鳴'],
+  },
+  'spot-d9-2': {
+    queries: ['Oodi Helsinki', 'Helsinki Central Library Oodi'],
+    captions: ['赫爾辛基頌歌中央圖書館（Oodi）波浪雲杉木立面與玻璃帷幕', '三樓「書之天堂（Book Heaven）」白色波浪天頂與全城落地窗', '赫爾辛基設計街區與芬蘭當代建築美學'],
+    story: '2018年為慶祝芬蘭獨立百年而落成的「Oodi（頌歌）」中央圖書館，由 ALA 建築事務所設計，耗資9,800萬歐元，以芬蘭雲杉木構築出巨大拱橋般的波浪曲線，被評為「全球最佳公共圖書館」。',
+    trivia: '這座圖書館裡「書本只佔三分之一空間」！二樓免費提供市民 3D 列印機、雷射切割機、錄音室、電競房甚至縫紉機！',
+    mustDo: ['搭手扶梯穿過圓形天窗直達三樓「書之天堂」，在室內白樺樹下閱讀拍照', '觀察館內會自己搭電梯、避開行人的可愛自動還書機器人', '走上三樓戶外市民大陽台，平視對面莊嚴的芬蘭國會大廈（Eduskuntatalo）'],
+  },
+  'spot-d9-3': {
+    queries: ['Löyly Helsinki', 'Hernesaari sauna Helsinki'],
+    captions: ['赫爾辛基 Löyly 現代木構造海濱桑拿館外觀', '波羅的海冰封海岸線與 Löyly 幾何松木露台', '傳統芬蘭木柴煙燻桑拿與海景休憩廳'],
+    story: '在人口550萬的芬蘭擁有超過330萬間桑拿房，「桑拿（Sauna）」更是唯一通行全球的芬蘭語詞彙！2016年開幕的 Löyly 由 Avanto 建築事務所打造，以4000塊FSC認證熱處理松木構築出宛如海岸岩石的現代雕塑。',
+    trivia: 'Löyly 在芬蘭語中指的是「將水潑在滾燙桑拿石上瞬間蒸騰而起的熱蒸氣與靈魂氣息」，芬蘭桑拿文化已被列入聯合國非物質文化遺產！',
+    mustDo: ['體驗赫爾辛基罕見的正統「黑煙燻桑拿（Savusauna）」溫潤木香', '蒸到全身發熱後順著木階梯直接跳進零度的波羅的海冰水泳池！', '在海景壁爐餐廳享用芬蘭國湯——奶油蒔蘿鮭魚湯（Lohikeitto）'],
+  },
+  'spot-d10-1': {
+    queries: ['Oslo Opera House', 'Operahuset Oslo'],
+    captions: ['奧斯陸歌劇院（Operahuset）純白卡拉拉大理石斜坡屋頂', '深入奧斯陸峽灣的冰山造型歌劇院與水上玻璃雕塑', '歌劇院內部溫潤橡木波浪牆與全景落地窗'],
+    story: '2008年落成的奧斯陸歌劇院由挪威國寶級建築事務所 Snøhetta 設計，耗資5億歐元，外牆鋪設36,000塊義大利卡拉拉白色大理石，宛如一座從奧斯陸峽灣緩緩升起的巨大純白冰川。',
+    trivia: '這是全世界第一座「鼓勵全市民直接踩上屋頂散步」的國家歌劇院，每塊大理石磚表面都經過特殊防滑紋理雕刻！',
+    mustDo: ['沿著白色大理石緩坡一路步行登上歌劇院最高處俯瞰奧斯陸峽灣', '拍攝海面上隨潮汐與風向旋轉的巨型玻璃雕塑《She Lies》', '順道參觀隔壁 2021 年落成的孟克美術館（MUNCH）真跡《吶喊》'],
+  },
+  'spot-d10-2': {
+    queries: ['Vigeland Park Oslo', 'Frogner Park sculptures'],
+    captions: ['奧斯陸維格蘭雕塑公園高達17公尺的《人生柱（Monolitten）》', '生命之橋上的青銅雕塑群與著名《憤怒的小男孩（Sinnataggen）》', '冬雪覆蓋下的維格蘭公園生命之泉與中軸線'],
+    story: '挪威雕塑大師古斯塔夫·維格蘭（Gustav Vigeland）傾盡畢生40年心血，獨立完成園內212座青銅與花崗岩雕塑（共超過600個人物），不設任何宗教或政治神話，純粹刻畫人類從誕生、相愛、掙扎到死亡的生命輪迴。',
+    trivia: '鎮園之寶《人生柱》是由一整塊重達 270 噸的巨型花崗岩原石，由 3 名石匠按照維格蘭的泥塑模型耗時整整 14 年才手工雕琢完成，上頭交纏著 121 個人體！',
+    mustDo: ['在生命之橋左側欄杆找到跺腳大哭的《憤怒的小男孩》，握握他被摸得金亮的小手祈福', '登上最高處階梯近距離仰望 121 個人體螺旋向天攀升的《人生柱》', '站在公園最深處透過《生命之輪（Livshjulet）》圓環拍向整條雕塑中軸線'],
+  },
+  'spot-d10-3': {
+    queries: ['Bryggen Bergen', 'Bergen Hanseatic wharf'],
+    captions: ['卑爾根布呂根（Bryggen）世界文化遺產彩色木屋碼頭', '漢薩同盟百年傾斜木造商行與港灣倒影', '走進布呂根木屋群深處狹窄幽古的木板通道'],
+    story: '自1360年起，布呂根（意為碼頭）便是德意志「漢薩同盟」最重要的海外貿易據點，壟斷北歐鱈魚乾與穀物貿易近400年；1702年大火後完全依照中世紀原始木結構重建，被列入世界文化遺產。',
+    trivia: '仔細看布呂根的彩色木屋都有些微傾斜！因為地基是數百年前埋在海泥裡的原木樁，整排房屋互相倚靠支撐才得以屹立三百年不倒！',
+    mustDo: ['鑽進兩排彩色木屋之間狹窄的古老木造暗巷，尋找牆上的漢薩鱈魚乾徽章', '搭乘佛洛伊恩山纜車（Fløibanen）6 分鐘登頂俯瞰卑爾根七山與峽灣夜景', '在港邊魚市場（Fisketorget）品嚐現烤挪威帝王蟹腿與鮮魚湯'],
+  },
+  'spot-d11-1': {
+    queries: ['Ishavskatedralen', 'Arctic Cathedral Tromsø'],
+    captions: ['特羅姆瑟北極大教堂（Ishavskatedralen）11座白色三角形冰山造型外觀', '雪夜裡發光的北極大教堂與跨海大橋同框', '教堂內高達23公尺的《基督復臨》巨型彩繪玻璃馬賽克窗'],
+    story: '1965年落成的北極大教堂由建築師 Jan Inge Hovig 設計，以11片塗覆鋁板的巨型三角形混凝土結構交疊而成，象徵北極浮冰與薩米人傳統帳篷 Lavvu，被譽為挪威最偉大的現代主義教堂。',
+    trivia: '東側高達23公尺、重達6噸的《基督復臨》彩繪玻璃窗，是由藝術家 Victor Sparre 以厚達3公分的法國水晶玻璃塊鑲嵌而成！',
+    mustDo: ['在跨海大橋步道回望北極大教堂與背後高聳的 Tromsdalstinden 雪峰', '走進教堂仰望巨型冰柱水晶吊燈與 2940 根音管的帆船造型管風琴', '預約聆聽一場大教堂午夜極光燭光音樂會（Northern Lights Concert）'],
+  },
+  'spot-d11-2': {
+    queries: ['Fjellheisen', 'Tromsø view from Storsteinen'],
+    captions: ['從斯托斯坦恩山（Storsteinen）纜車觀景台俯瞰特羅姆瑟峽灣與跨海大橋', '特羅姆瑟高空雪山平台與漫天極光大爆發', 'Fjellheisen 山頂觀景台極夜璀璨萬家燈火'],
+    story: '1961年由特羅姆瑟航運公司興建的 Fjellheisen 高空纜車，僅需4分鐘便能將旅人從海平面送上海拔421公尺的斯托斯坦恩山（Storsteinen）懸崖平台，將整座特羅姆瑟島、跨海大橋與周圍連綿雪峰盡收眼底。',
+    trivia: '山頂纜車站外牆鑲嵌著一面巨大的北極熊金屬徽章，這是所有抵達北極圈69度旅人必拍的極地認證標誌！',
+    mustDo: ['攜帶腳架在山頂觀景台拍攝「翡翠極光 + 特羅姆瑟跨海大橋 + 峽灣燈火」同框神作', '在山頂 Fjellstua 景觀餐廳一面喝熱騰騰的馴鹿肉湯一面守候極光', '勇敢走到戶外懸崖延伸步道感受北極圈高空凜冽卻純淨的夜風'],
+  },
+  'spot-d11-3': {
+    queries: ['Aurora Tromsø', 'Northern Lights Norway fjord'],
+    captions: ['特羅姆瑟峽灣翡翠綠與紫紅極光大爆發實景', '極光雙體船無聲航行於挪威北極峽灣雪山間', '極夜峽灣水面映照歐若拉光帶雙重倒影'],
+    story: '特羅姆瑟正好位於地球「極光橢圓帶（Auroral Oval）」正中央；搭乘電力混合無聲雙體船駛離城市光害進入漆黑峽灣，能同時欣賞天空極光與海面極光倒影的雙重奇景。',
+    trivia: '肉眼看到的微弱極光常呈灰白色，但當太陽風暴（KP值≥4）撞擊高空100公里處的氧原子時，肉眼就能直接看見翠綠甚至紫紅色的劇烈舞動！',
+    mustDo: ['在雙體船全景加熱客艙與 360 度頂層甲板交替守候極光冕爆發', '學習設定相機或手機夜間長曝光（快門 3-6 秒）拍下峽灣極光人像', '在船上品嚐挪威傳統現烤心形鬆餅（Vafler）配棕色山羊起司（Brunost）'],
+  },
+  'spot-d12-1': {
+    queries: ['Blue Lagoon Iceland', 'Bláa lónið'],
+    captions: ['冰島藍湖溫泉（Blue Lagoon）乳藍色地熱泉水與黑色火山熔岩', '浸泡在 38°C 富含白矽泥與礦物質的夢幻地熱潟湖中', '藍湖 The Retreat 奢華火山熔岩水療與水吧'],
+    story: '藍湖並非天然形成，而是1976年鄰近的 Svartsengi 地熱發電廠將地下2,000公尺深處富含礦物質的熱海水排入周圍800年前形成的黑色熔岩原，於1981年被當地居民發現具有神奇護膚療效而成為世界奇景。',
+    trivia: '泉水之所以呈現夢幻的蒂芬妮乳藍色，是因為水中豐富的「二氧化矽（Silica）」顆粒在陽光下只折射藍色光波，水本身其實是透明白色的！',
+    mustDo: ['到湖中央的原木矽泥吧（Silica Mud Bar）挖取天然白矽泥敷滿全臉拍照', '憑手環在池中水吧點一杯冰島 Gull 啤酒或野莓果昔邊泡湯邊暢飲', '下水前務必在頭髮抹滿大量「免沖洗護髮素」防止高濃度矽質讓頭髮打結'],
+  },
+  'spot-d13-1': {
+    queries: ['Þingvellir', 'Thingvellir National Park'],
+    captions: ['辛格韋德利國家公園（Þingvellir）歐亞板塊與北美板塊大裂谷雪景', '西元 930 年世界最古老民主議會 Alþingi 遺址與法律岩', '清澈見底的絲浮拉裂縫（Silfra）與白雪覆蓋的火山苔原'],
+    story: '西元930年，冰島全境的維京氏族首領齊聚於此創立了世界上最古老的民主議會「阿爾庭（Alþingi）」，法律宣講人站在火山裂谷石壁前背誦法律，開啟了人類千年議會民主史。',
+    trivia: '這裡是地球上極少數能在陸地上直接行走於「北美板塊」與「歐亞板塊」交界處的地方，兩大板塊每年仍以 2 公分的速度持續撕裂分離！',
+    mustDo: ['漫步在兩大洲大陸板塊撕裂而成的 Almannagjá 火山玄武岩大裂谷步道', '站在觀景台俯瞰能見度超過 100 公尺、灌滿朗格冰川融水的絲浮拉裂縫（Silfra）', '在法律岩（Lögberg）旗桿下感受冰島於 1944 年正式宣布獨立建國的歷史現場'],
+  },
+  'spot-d13-2': {
+    queries: ['Strokkur', 'Geysir Iceland'],
+    captions: ['蓋歇爾地熱區史托克間歇泉（Strokkur）衝天噴發高達30公尺瞬間', '間歇泉噴發前一秒形成的絕美蒂芬妮藍沸水圓拱氣泡', '白雪皚皚的地熱谷中冒著滾燙白色蒸氣的沸騰溫泉孔'],
+    story: '英語中「間歇泉（Geyser）」一詞正是源自此處的大蓋歇爾泉（Geysir，冰島語意為狂暴噴湧）！旁邊活躍的史托克間歇泉（Strokkur）每隔 5 至 8 分鐘便會轟然將沸水噴向 20 至 35 公尺高空。',
+    trivia: '要拍到最震撼的照片，秘訣是盯緊泉眼中央：當沸水瞬間隆起成一顆巨大的「土耳其藍水晶球氣泡」時按下連拍，下一秒就是衝天水柱！',
+    mustDo: ['站在上風處開啟手機高速連拍，捕捉間歇泉隆起藍色水泡並炸裂衝天的瞬間', '觀察地熱步道旁呈現藍綠與赭紅色的 Blesi 雙色雙生溫泉池', '在遊客中心品嚐用地下 100°C 地熱蒸氣埋土慢烤 24 小時的冰島黑麥火山麵包（Rúgbrauð）'],
+  },
+  'spot-d13-3': {
+    queries: ['Gullfoss', 'Gullfoss waterfall'],
+    captions: ['冰島古佛斯黃金瀑布（Gullfoss）雙層斷層巨瀑與冬季冰封奇景', 'Hvítá 白河冰川融水以萬馬奔騰之勢跌入32公尺深峽谷', '冬日陽光下橫跨黃金瀑布水霧的璀璨彩虹'],
+    story: '20世紀初外國財團曾企圖租下黃金瀑布興建水力發電廠，當時農場主人的女兒 Sigríður Tómasdóttir 徒步百公里前往雷克雅維克抗爭，甚至以投瀑相諫，最終成功保住這座自然奇景，她也成為冰島第一位環保英雄。',
+    trivia: '瀑布分為上下兩層（11公尺與21公尺）並呈 90 度垂直轉折直接跌入深達 70 公尺的狹窄火山斷層峽谷，遠看宛如河水突然消失在大地裂縫中！',
+    mustDo: ['站在上層觀景台俯瞰結滿巨大冰柱的雙層瀑布與峽谷激流', '尋找瀑布旁紀念環保女英雄 Sigríður Tómasdóttir 的石碑浮雕', '在黃金瀑布景觀餐廳必喝一碗料多濃郁、可免費續湯的「冰島傳統羊肉蔬菜湯（Kjötsúpa）」'],
+  },
+  'spot-d13-4': {
+    queries: ['Hallgrímskirkja', 'Hallgrimskirkja Reykjavik'],
+    captions: ['雷克雅維克地標哈爾格林姆大教堂（Hallgrímskirkja）74.5公尺玄武岩柱外觀', '教堂前探險家萊夫·埃里克松（Leif Erikson）銅像與冬雪', '從大教堂鐘樓頂端俯瞰雷克雅維克彩色鐵皮屋頂與大西洋海灣'],
+    story: '由冰島國家建築師 Guðjón Samúelsson 於1937年設計、耗時41年才於1986年完工；外觀靈感源自冰島火山熔岩冷卻凝固成的六角形玄武岩柱（如黑沙灘與斯瓦蒂瀑布），並以17世紀冰島聖詩詩人 Hallgrímur Pétursson 命名。',
+    trivia: '教堂前方的維京探險家萊夫·埃里克松雕像，是1930年美國為慶祝冰島議會（Alþingi）成立一千年所贈送，因為他比哥倫布早 500 年就踏上了北美大陸！',
+    mustDo: ['搭乘電梯登上 74.5 公尺高的鐘樓觀景台，拍下舉世聞名的雷克雅維克彩色屋頂全景', '走進教堂內仰望高達 15 公尺、重 25 噸、擁有 5,275 根音管的德國巨型管風琴', '從教堂正前方的彩虹街（Skólavörðustígur）一路漫步拍回教堂正立面'],
+  },
+  'spot-d13-5': {
+    queries: ['Reykjavik fireworks', 'New Year fireworks Reykjavik', 'Fireworks night city'],
+    captions: ['雷克雅維克跨年夜哈爾格林姆大教堂前萬人自發煙火齊放', '360 度環繞全城天際線的冰島跨年璀璨煙火海', '冰島跨年傳統社區大型篝火晚會（Áramótabrenna）'],
+    story: '冰島沒有官方跨年煙火秀，但全雷克雅維克 20 多萬市民會在跨年夜當晚全員出動，在自家門口與哈爾格林姆教堂廣場同時點燃超過 500 噸煙火，造就地球上最狂熱的 360 度全民煙火奇觀！',
+    trivia: '冰島人買煙火其實是在做公益！全冰島的跨年煙火皆由「冰島搜救隊（ICE-SAR）」獨家專賣，市民狂買煙火正是為了資助這群全年無償拯救旅人的極地英雄！',
+    mustDo: ['傍晚先參加當地社區的跨年巨型篝火晚會（Áramótabrenna），與冰島人一起唱歌燒走舊年厄運', '23:30 前抵達哈爾格林姆大教堂廣場，戴上護目鏡沉浸在 360 度無死角震撼煙火雨中', '午夜 00:00 敲響時開啟香檳，與身旁來自世界各地的旅人擁抱高喊「Gleðilegt nýtt ár!（新年快樂）」'],
+  },
+  'spot-d14-1': {
+    queries: ['Blue Lagoon Iceland spa', 'Geothermal pool Iceland'],
+    captions: ['冰島海濱地熱溫泉無邊際潟湖直面北大西洋海浪', '嵌入黑色玄武岩崖壁的草皮屋（Turf House）傳統桑拿', '夕陽與極光映照下的冰島海景地熱水療'],
+    story: '冰島人世代以地熱溫泉作為社交與療癒的核心場所（Sundlaugar）；結合古老冰島草皮屋建築與現代無邊際海景潟湖的水療儀式，讓旅人在北大西洋驚濤與溫暖泉水間獲得身心重生。',
+    trivia: '冰島傳統水療必體驗「七步儀式（The Ritual）」：從溫水池、冷水池、全景景觀桑拿、冰霧空間、海鹽磨砂到蒸氣浴，最後以冰島烏鴉莓飲品收尾！',
+    mustDo: ['趴在 75 公尺長的無邊際溫泉池邊緣，眺望北大西洋與遠方總統官邸半島', '走進擁有整面巨型無框海景落地窗的懸崖桑拿房欣賞海浪拍岸', '體驗富含礦物質的火山海鹽全身去角質磨砂療程'],
+  },
+  'spot-d14-2': {
+    queries: ['Harpa Reykjavik', 'Laugavegur Reykjavik'],
+    captions: ['雷克雅維克哈帕音樂廳（Harpa）靈感源自玄武岩的立體幾何玻璃帷幕', '丹麥冰島藝術家 Olafur Eliasson 設計的萬花筒蜂巢玻璃磚內景', '雷克雅維克彩虹街（Skólavörðustígur）與北歐文創街區'],
+    story: '2008年冰島金融海嘯爆發時一度停工，但冰島政府決定傾力續建，作為國民重振信心的象徵，並於2011年落成、榮獲歐盟密斯·凡·德羅當代建築首獎。',
+    trivia: '外牆由超過 1,000 個被稱為「準磚（Quasi-bricks）」的十二面體立體鋼構玻璃組成，內含雙色玻璃，隨太陽角度與海浪反光變幻出極光般的色彩！',
+    mustDo: ['走進音樂廳大廳站在巨型蜂巢玄武岩玻璃窗下拍攝奇幻光影人像', '造訪 1937 年開業的「Bæjarins Beztu Pylsur」品嚐全冰島最著名的脆炸洋蔥羊肉熱狗', '在彩虹街挑選一件冰島奶奶親手編織的傳統防水純羊毛毛衣（Lopapeysa）'],
+  },
+  'spot-d14-3': {
+    queries: ['Grótta lighthouse', 'Sun Voyager Reykjavik'],
+    captions: ['雷克雅維克格羅塔燈塔（Grótta）北大西洋海岸極光謝幕實景', '太陽航海者（Sólfarið）維京船骨雕塑與法赫薩灣雪山', '在海濱地熱暖腳池（Kvika Footbath）邊泡腳邊仰望極光'],
+    story: '位於雷克雅維克最西端 Seltjarnarnes 半島尖端的格羅塔燈塔（Grótta）建於1897年，三面環繞北大西洋，是首都圈內光害最少、最受當地人喜愛的極光秘境。',
+    trivia: '燈塔旁的岩石海岸藏著一口由藝術家 Ólöf Nordal 鑿出的迷你天然地熱溫泉池「Kvika」，旅人可以免費脫鞋泡著 39°C 溫泉水看極光！',
+    mustDo: ['退潮時沿著鵝卵石沙洲走到純白格羅塔燈塔下拍攝極光倒影', '找到海邊岩石上的「Kvika 天然地熱泡腳池」泡腳吹海風看星空', '在太陽航海者（Sólfarið）不鏽鋼船骨雕塑前向北歐極光女神道別'],
+  },
+  'spot-d15-1': {
+    queries: ['Keflavik Airport', 'Reykjanes Peninsula'],
+    captions: ['冰島凱夫拉維克國際機場（KEF）極地玄武岩與木質航廈', '機場門前的巨型「海雀破蛋（Jet Nest）」不鏽鋼地標雕塑', '從機艙舷窗俯瞰冰島火山冰川與北大西洋壯麗航路'],
+    story: '二戰期間由美軍興建於雷克雅尼斯半島黑色熔岩原上的凱夫拉維克機場，是連接北美與歐洲的北大西洋航空樞紐，航廈外矗立著藝術家 Magnús Tómasson 創作的巨型鋼雕《Jet Nest》，象徵飛向天際的夢想。',
+    trivia: '冰島凱夫拉維克機場免稅店因為免除高達 24% 的冰島加值稅，買 Blue Lagoon 藍湖白矽泥面膜與冰島火山鹽比在市區購買還要便宜將近三成！',
+    mustDo: ['在退稅櫃檯辦妥冰島購物退稅後，於免稅店掃貨 Blue Lagoon 矽泥面膜與 Omnom 冰島手工巧克力', '登機選擇靠窗座位，起飛時俯瞰雷克雅尼斯半島冒煙的地熱火山原與大西洋海岸線', '整理 15 天橫跨北歐五國的極光、聖誕與跨年相簿，帶著滿滿感動返航'],
+  },
+};
+
+const ASSET_REPLACEMENTS = {
+  'nyhavn_copenhagen_christmas_1791106623653.jpg': ['Nyhavn Copenhagen'],
+  'the_little_mermaid_copenhagen_1791105770175.jpg': ['Little Mermaid Copenhagen'],
+  'christiansborg_palace_copenhagen_1791105751799.jpg': ['Christiansborg Palace'],
+  'gamla_stan_stockholm_winter_1791104433260.jpg': ['Stortorget Stockholm', 'Gamla stan Stockholm'],
+  'stockholm_city_hall_stadshuset_1791105827653.jpg': ['Stockholm City Hall'],
+  'vasa_ship_museum_stockholm_1791105813430.jpg': ['Vasa ship Stockholm'],
+  'rovaniemi_santa_village_1791106609446.jpg': ['Santa Claus Village Rovaniemi'],
+  'hotel_kakslauttanen_igloo_1791107807525.jpg': ['Kakslauttanen', 'Glass igloo Finland'],
+  'temppeliaukio_rock_church_helsinki_1791105839299.jpg': ['Temppeliaukio Church'],
+  'tromso_aurora_fjord_1791106665448.jpg': ['Aurora Tromsø', 'Northern Lights Tromso'],
+  'arctic_cathedral_tromso_1791105868705.jpg': ['Ishavskatedralen'],
+  'bryggen_bergen_wharf_1791106639569.jpg': ['Bryggen Bergen'],
+  'oslo_opera_house_norway_1791105851238.jpg': ['Oslo Opera House'],
+  'blue_lagoon_iceland_1791106651658.jpg': ['Blue Lagoon Iceland'],
+  'hallgrimskirkja_reykjavik_1791105881144.jpg': ['Hallgrímskirkja'],
+  'nordic_newyear_fireworks_1791108780867.jpg': ['Reykjavik fireworks', 'Fireworks night sky'],
+  'hotel_dangleterre_copenhagen_1791107778788.jpg': ['Hotel d Angleterre Copenhagen'],
+  'hotel_grand_stockholm_1791107793747.jpg': ['Grand Hôtel Stockholm', 'Grand Hotel Stockholm'],
+  'hotel_retreat_lagoon_1791107820337.jpg': ['Blue Lagoon Iceland lava', 'Bláa lónið'],
+  'hotel_reykjavik_edition_1791107834570.jpg': ['Harpa Reykjavik', 'Reykjavik harbor'],
+  'nordic_luxury_suite_1791108738329.jpg': ['Hotel Kämp', 'Savoy Helsinki'],
+  'nordic_luxury_dining_1791108752703.jpg': ['Smørrebrød', 'Gravlax'],
+  'nordic_michelin_gourmet_1791107850499.jpg': ['Swedish meatballs', 'Lohikeitto'],
+  'nordic_specialties_gifts_1791108765418.jpg': ['Dala horse', 'Kuksa'],
+};
+
+async function main() {
+  console.log('1. Resolving 24 base asset replacements from Wikimedia Commons...');
+  const assetUrlMap = {};
+  const assetMultiMap = {};
+  for (const [fileName, queries] of Object.entries(ASSET_REPLACEMENTS)) {
+    const res = await searchCommons(queries, 4);
+    if (res.length > 0) {
+      assetUrlMap[`/src/assets/images/${fileName}`] = res[0].url;
+      assetMultiMap[`/src/assets/images/${fileName}`] = res.map((r) => r.url);
+      console.log(`  ✓ ${fileName} -> ${res[0].url.slice(0, 72)}... (${res.length} imgs)`);
+    }
+  }
+
+  console.log('2. Resolving 3-4 verified Wikimedia Commons images for all 40 itinerary spots...');
+  const spotDataMap = {};
+  for (const [spotId, cfg] of Object.entries(SPOTS_CONFIG)) {
+    const imgs = await searchCommons(cfg.queries, 4);
+    spotDataMap[spotId] = {
+      ...cfg,
+      images: imgs.slice(0, 3).map((im, idx) => ({
+        url: im.url,
+        caption: cfg.captions[idx] || cfg.captions[0],
+        author: im.author,
+        license: im.license,
+      })),
+    };
+    console.log(`  ✓ ${spotId}: ${spotDataMap[spotId].images.length} images`);
+  }
+
+  // 3. Update src/data/defaultItinerary.ts with multiple verified images + story + trivia + mustDo for each of the 40 spots
+  let itinContent = fs.readFileSync('src/data/defaultItinerary.ts', 'utf8');
+  for (const [spotId, data] of Object.entries(spotDataMap)) {
+    if (data.images.length === 0) continue;
+    // Match the spot block from id: 'spot-...' up to the next spot or end of array
+    const blockRegex = new RegExp(
+      `(id:\\s*'${spotId}'[\\s\\S]*?images:\\s*)\\[[\\s\\S]*?\\](,\\s*(?:hotelRecommendation|diningRecommendation|address|isCustom|\\}))`,
+      'm'
+    );
+    const imagesJson = JSON.stringify(data.images, null, 6).replace(/\n/g, '\n    ');
+    const extraFields = `,\n    story: ${JSON.stringify(data.story)},\n    trivia: ${JSON.stringify(
+      data.trivia
+    )},\n    mustDo: ${JSON.stringify(data.mustDo)}`;
+
+    itinContent = itinContent.replace(blockRegex, `$1${imagesJson}${extraFields}$2`);
+  }
+
+  // Also replace any remaining /src/assets/images/... in defaultItinerary.ts
+  for (const [localPath, remoteUrl] of Object.entries(assetUrlMap)) {
+    itinContent = itinContent.split(localPath).join(remoteUrl);
+  }
+  fs.writeFileSync('src/data/defaultItinerary.ts', itinContent);
+  console.log('✓ Updated src/data/defaultItinerary.ts with multi-photo galleries and story/trivia/mustDo!');
+
+  // 4. Update all other files in src/ that reference /src/assets/images/...
+  const targetFiles = [
+    'src/components/HotelDiningGuide.tsx',
+    'src/components/CoverHero.tsx',
+    'src/components/DayOverviewCard.tsx',
+    'src/components/PhotoAlbumView.tsx',
+    'src/components/DestinationVideosModal.tsx',
+    'src/components/NewYearCountdownModal.tsx',
+    'src/components/ChristmasCardModal.tsx',
+    'src/components/ImageCreditsModal.tsx',
+    'src/components/SafeImage.tsx',
+  ];
+
+  for (const filePath of targetFiles) {
+    if (!fs.existsSync(filePath)) continue;
+    let content = fs.readFileSync(filePath, 'utf8');
+
+    if (filePath === 'src/components/HotelDiningGuide.tsx') {
+      // For HotelDiningGuide.tsx, if two gallery items use the same /src/assets/images/... key, use different photos from assetMultiMap!
+      for (const [localPath, urls] of Object.entries(assetMultiMap)) {
+        let occurrence = 0;
+        while (content.includes(localPath)) {
+          const chosenUrl = urls[occurrence % urls.length] || urls[0];
+          content = content.replace(localPath, chosenUrl);
+          occurrence++;
+        }
+      }
+    } else {
+      for (const [localPath, remoteUrl] of Object.entries(assetUrlMap)) {
+        content = content.split(localPath).join(remoteUrl);
+      }
+    }
+
+    fs.writeFileSync(filePath, content);
+    console.log(`✓ Updated ${filePath}`);
+  }
+
+  console.log('All files updated with verified Wikimedia Commons photos!');
+}
+
+main();
